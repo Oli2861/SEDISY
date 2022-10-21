@@ -1,7 +1,8 @@
-import java.io.*;
-import java.util.Arrays;
+package Utils;
 
-abstract class FileUtils {
+import java.io.*;
+
+public abstract class FileUtils {
 
     public static void writeFile(String message, String filename) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter((filename)))) {
@@ -12,7 +13,7 @@ abstract class FileUtils {
     }
 
     public static void appendFile(String message, String filename) {
-        try (PrintWriter printWriter = new PrintWriter(new BufferedWriter(new FileWriter((filename))))) {
+        try (PrintWriter printWriter = new PrintWriter(new BufferedWriter(new FileWriter((filename), true)))) {
             printWriter.println(message);
         } catch (IOException e) {
             e.printStackTrace();
