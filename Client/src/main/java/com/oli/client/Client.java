@@ -1,6 +1,6 @@
-package Client;
+package com.oli.client;
 
-import Utils.FileUtils;
+import com.oli.client.Utils.FileUtils;
 
 import java.io.*;
 import java.net.Socket;
@@ -46,6 +46,7 @@ public class Client {
      * Start the client and send some requests.
      */
     public static void main(String[] args) throws IOException {
+        System.out.println("Go!");
         Client client = new Client();
         try {
             client.connect("127.0.0.1", 7000);
@@ -62,5 +63,6 @@ public class Client {
 
         response = client.sendMessage("exit");
         System.out.println(response);
+        client.disconnect();
     }
 }

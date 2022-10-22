@@ -1,6 +1,6 @@
-package Server;
+package com.oli.server;
 
-import Utils.FileUtils;
+import com.oli.server.utils.FileUtils;
 
 import java.util.Date;
 
@@ -17,7 +17,8 @@ public class Logger {
      * @param message The message to be logged.
      */
     public void log(String message) {
-        System.out.print(new Date().toString() + "\t" + tag + "\t" + message);
-        FileUtils.appendFile(message, tag + "-log.txt");
+        String logEntry = String.format("%s\t%-20s\t%s", new Date().toString(), tag, message);
+        System.out.println(logEntry);
+        FileUtils.appendFile(logEntry, "log.txt");
     }
 }

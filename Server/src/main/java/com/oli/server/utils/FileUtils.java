@@ -1,8 +1,11 @@
-package Utils;
+package com.oli.server.utils;
+
+import com.oli.server.Logger;
 
 import java.io.*;
 
 public abstract class FileUtils {
+    static Logger logger = new Logger(FileUtils.class.getSimpleName());
 
     public static void writeFile(String message, String filename) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter((filename)))) {
@@ -20,9 +23,15 @@ public abstract class FileUtils {
         }
     }
 
-    public static String getFileContents(String filename) throws IOException {
-        InputStream inputStream = new FileInputStream(filename);
-        return readFromInputStream(inputStream);
+    public static String getFileContents(String filename) {
+        InputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(filename);
+            return readFromInputStream(inputStream);
+        } catch (FileNotFoundException ignored) {
+            logger.log("File not found: " + filename);
+            return null;
+        }
     }
 
     private static String readFromInputStream(InputStream inputStream) {
