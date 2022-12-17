@@ -4,5 +4,5 @@ package com.oli.user
 data class User(
     val id: String,
     val userName: String,
-    val password: String
+    val email: String
 )

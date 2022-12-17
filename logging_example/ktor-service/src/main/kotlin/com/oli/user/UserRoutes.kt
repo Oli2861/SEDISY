@@ -2,13 +2,24 @@ package com.oli.user
 
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
+object UserRouteConstants{
+    const val USER_ROUTE_PATH = "/user"
+}
+
 fun Route.userRouting() {
 
-    route("/user") {
+    route(UserRouteConstants.USER_ROUTE_PATH) {
+
+        authenticate("auth-basic-hashed") {
+            get {
+                call.respond(User("", "Max", "mail"))
+            }
+        }
 
         get("{id?}") {
             val userId =
