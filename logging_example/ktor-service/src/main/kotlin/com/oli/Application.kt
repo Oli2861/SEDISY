@@ -1,5 +1,6 @@
 package com.oli
 
+import com.oli.persistence.DatabaseFactory
 import com.oli.plugins.configureHTTP
 import com.oli.plugins.configureRouting
 import com.oli.plugins.configureSecurity
@@ -24,6 +25,9 @@ fun Application.module() {
     //configureMonitoring()
     configureSerialization()
     configureRouting()
+
+    DatabaseFactory.init()
+
     userModule()
 
 }

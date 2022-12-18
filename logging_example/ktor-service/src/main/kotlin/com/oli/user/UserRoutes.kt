@@ -7,33 +7,45 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-object UserRouteConstants{
+object UserRouteConstants {
     const val USER_ROUTE_PATH = "/user"
 }
 
-fun Route.userRouting() {
+fun Route.userRouting(userService: UserService) {
 
     route(UserRouteConstants.USER_ROUTE_PATH) {
 
         authenticate("auth-basic-hashed") {
             get {
-                call.respond(User("", "Max", "mail"))
+                call.respond(userService.getAll())
             }
         }
 
         get("{id?}") {
             val userId =
-                call.parameters["id"] ?: return@get call.respondText("Missing userId", status = HttpStatusCode.BadRequest)
-            call.application.log.info("Requesting user $userId")
+                call.parameters["id"] ?: return@get call.respondText(
+                    "Missing userId",
+                    status = HttpStatusCode.BadRequest
+                )
 
-            call.respondText("Tbd")
+            val user = userService.getUser(userId)
+
+            return@get if (user == null) {
+                call.respondText("No user found for the provided userId", status = HttpStatusCode.NotFound)
+            } else {
+                call.respond(user)
+            }
         }
 
         post {
-            val user = call.receive<User>()
-            call.application.log.info("Creating user $user")
+            val user: User = call.receive()
+            val createdUserName: String? = userService.createUser(user)
 
-            call.respondText("Tbd")
+            return@post if (createdUserName == null) {
+                call.respondText("Unable to create the user.", status = HttpStatusCode.Conflict)
+            } else {
+                call.respondText("Created user with username $createdUserName", status = HttpStatusCode.Created)
+            }
         }
 
     }

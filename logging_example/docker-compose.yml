@@ -38,6 +38,21 @@ services:
     environment:
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
 
+  postgres:
+    image: postgres:14
+    container_name: postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: ktor
+      POSTGRES_PASSWORD: ktor
+      POSTGRES_DB: ktor
+      LISTEN_ADDRESSES: localhost
+    volumes:
+      - ./volumes/postgres/data:/var/lib/postgresql/data
+      - ./volumes/postgres/logs:/var/log/postgresql
+    command: ["postgres", "-c", "logging_collector=true", "-c", "log_destination=csvlog", "-c", "log_statement=all", "-c", "log_directory=/var/log/postgresql", "-c", "log_filename=postgres"]
+
   ktor-service:
     build:
       context: ./ktor-service
@@ -49,5 +64,11 @@ services:
       - logstash
       - elasticsearch
       - kibana
+      - postgres
     environment:
       LOGSTASH_HOST: logstash:4560
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ktor
+      POSTGRES_PASSWORD: ktor
+      POSTGRES_DB: ktor

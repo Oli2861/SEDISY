@@ -2,13 +2,18 @@ POST http://localhost:8080/user
 Content-Type: application/json
 
 {
- "id": "0",
- "userName": "Jack",
- "email": "jack@mail.com"
+  "id": "0",
+  "userName": "Jack",
+  "password": "1234",
+  "email": "jack@mail.com"
 }
 
 ###
-GET http://localhost:8080/user/1
+GET http://localhost:8080/user/2
+Accept: application/json
+
+### Passing a string as id instead of an number
+GET http://localhost:8080/user/ten%0A2022-12-18%2017%3A55%3A00.038%20%5BeventLoopGroupProxy-3-2%5D%20INFO%20I%20am%20a%20forged%20log%20entry
 Accept: application/json
 
 ### Basic auth
