@@ -1,10 +1,7 @@
 package com.oli
 
 import com.oli.persistence.DatabaseFactory
-import com.oli.plugins.configureHTTP
-import com.oli.plugins.configureRouting
-import com.oli.plugins.configureSecurity
-import com.oli.plugins.configureSerialization
+import com.oli.plugins.*
 import com.oli.user.userModule
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -20,6 +17,8 @@ fun main() {
 }
 
 fun Application.module() {
+    configureKoin()
+
     configureSecurity()
     configureHTTP()
     //configureMonitoring()

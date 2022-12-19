@@ -4,24 +4,32 @@ import com.oli.persistence.UserDAOImpl
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.runBlocking
+import org.koin.dsl.module
+import org.koin.ktor.plugin.koin
 
 fun Application.userModule() {
-    configureUserRouting()
+    koin {
+        modules(userKoinModule)
+        configureUserRouting()
+    }
 }
 
 fun Application.configureUserRouting() {
-    val userDAO = UserDAOImpl().apply {
-        runBlocking {
-            // Add admin user if empty
-            if (readAll().isEmpty()) {
-                create(User(0, "admin", "1234", "mail@mail.com"))
+    routing {
+        userRouting()
+    }
+}
+
+private val userKoinModule = module {
+    single<UserDAO> {
+        UserDAOImpl().apply {
+            runBlocking {
+                // Add admin user if empty
+                if (readAll().isEmpty()) {
+                    create(User(0, "admin", "1234", "mail@mail.com"))
+                }
             }
         }
     }
-
-    val userService = UserService(userDAO, this.log)
-
-    routing {
-        userRouting(userService)
-    }
+    single { UserService(userDAO = get(), logger = get()) }
 }

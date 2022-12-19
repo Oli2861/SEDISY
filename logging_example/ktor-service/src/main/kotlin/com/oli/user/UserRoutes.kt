@@ -6,12 +6,15 @@ import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
+import org.slf4j.Logger
 
 object UserRouteConstants {
     const val USER_ROUTE_PATH = "/user"
 }
 
-fun Route.userRouting(userService: UserService) {
+fun Route.userRouting() {
+    val userService by inject<UserService>()
 
     route(UserRouteConstants.USER_ROUTE_PATH) {
 

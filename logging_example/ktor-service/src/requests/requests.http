@@ -9,7 +9,7 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:8080/user/2
+GET http://localhost:8080/user/1
 Accept: application/json
 
 ### Passing a string as id instead of an number
@@ -21,13 +21,12 @@ GET http://localhost:8080/user
 Authorization: Basic Harry 1234
 Accept: application/json
 
-### Basic auth (fails)
+### Basic auth
 GET http://localhost:8080/user
 Authorization: Basic Not_Harry 1234
 Accept: application/json
 
-
-### Basic auth
+### Basic auth (fails)
 GET http://localhost:8080/user
 Authorization: Basic Harry 12345
 Accept: application/json

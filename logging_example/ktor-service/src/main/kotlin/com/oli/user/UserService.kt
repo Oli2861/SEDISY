@@ -1,6 +1,7 @@
 package com.oli.user
 
-import io.ktor.util.logging.*
+import org.koin.java.KoinJavaComponent.inject
+import org.slf4j.Logger
 
 class UserService(
     private val userDAO: UserDAO,

@@ -42,7 +42,7 @@ class UserDAOImpl : UserDAO {
         } > 0
     }
 
-    override suspend fun delete(userId: Int): Boolean = DatabaseFactory.dbQuery {
-        Users.deleteWhere { id eq userId } > 0
+    override suspend fun delete(id: Int): Boolean = DatabaseFactory.dbQuery {
+        Users.deleteWhere { this.id eq id } > 0
     }
 }
