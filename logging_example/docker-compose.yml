@@ -1,18 +1,18 @@
 services:
-  logstash:
-    hostname: logstash
-    image: docker.elastic.co/logstash/logstash-oss:6.6.2
-    container_name: logstash
+  postgres:
+    image: postgres:14
+    container_name: postgres
     ports:
-      - 9600:9600
-      - 8089:8089
-      - 4560:4560
+      - 5432:5432
+    environment:
+      POSTGRES_USER: ktor
+      POSTGRES_PASSWORD: ktor
+      POSTGRES_DB: ktor
+      LISTEN_ADDRESSES: localhost
     volumes:
-      - ./logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-    depends_on:
-      - elasticsearch
-    links:
-      - elasticsearch
+      - ./volumes/postgres/data:/var/lib/postgresql/data:rw
+      - ./volumes/postgres/logs:/var/log/postgresql:rw
+    command: ["postgres", "-c", "logging_collector=true", "-c", "log_destination=csvlog", "-c", "log_statement=all", "-c", "log_directory=/var/log/postgresql", "-c", "log_filename=postgres"]
 
   elasticsearch:
     hostname: elasticsearch
@@ -38,20 +38,38 @@ services:
     environment:
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
 
-  postgres:
-    image: postgres:14
-    container_name: postgres
+  logstash:
+    hostname: logstash
+    image: docker.elastic.co/logstash/logstash-oss:6.6.2
+    container_name: logstash
     ports:
-      - 5432:5432
-    environment:
-      POSTGRES_USER: ktor
-      POSTGRES_PASSWORD: ktor
-      POSTGRES_DB: ktor
-      LISTEN_ADDRESSES: localhost
+      - 9600:9600
+      - 8089:8089
+      - 4560:4560
     volumes:
-      - ./volumes/postgres/data:/var/lib/postgresql/data
-      - ./volumes/postgres/logs:/var/log/postgresql
-    command: ["postgres", "-c", "logging_collector=true", "-c", "log_destination=csvlog", "-c", "log_statement=all", "-c", "log_directory=/var/log/postgresql", "-c", "log_filename=postgres"]
+      - ./logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
+    depends_on:
+      - elasticsearch
+    links:
+      - elasticsearch
+
+  filebeat:
+    user: root
+    hostname: filebeat
+    image: docker.elastic.co/beats/filebeat-oss:7.1.0
+    container_name: filebeat
+    command: --strict.perms=false -e
+    volumes: 
+      - ./filebeat/filebeat.docker.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./volumes/postgres/logs:/var/log/postgresql/:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on: 
+      - postgres
+      - elasticsearch
+    environment:
+      ELASTICSEARCH_HOST: elasticsearch:9200
+      KIBANA_HOST: localhost:5601
 
   ktor-service:
     build:
