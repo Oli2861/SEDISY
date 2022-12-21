@@ -7,7 +7,6 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
-import org.slf4j.Logger
 
 object UserRouteConstants {
     const val USER_ROUTE_PATH = "/user"
@@ -24,14 +23,22 @@ fun Route.userRouting() {
             }
         }
 
-        get("{id?}") {
-            val userId =
-                call.parameters["id"] ?: return@get call.respondText(
-                    "Missing userId",
-                    status = HttpStatusCode.BadRequest
-                )
+        get("{id}") {
+            val userId = call.parameters["id"] ?: return@get call.respondText("Missing userId", status = HttpStatusCode.BadRequest)
 
             val user = userService.getUser(userId)
+
+            return@get if (user == null) {
+                call.respondText("No user found for the provided userId", status = HttpStatusCode.NotFound)
+            } else {
+                call.respond(user)
+            }
+        }
+
+        get("/notsanitized/{id}"){
+            val userId = call.parameters["id"] ?: return@get call.respondText("Missing userId", status = HttpStatusCode.BadRequest)
+
+            val user = userService.getUserLogEntryNotSanitized(userId)
 
             return@get if (user == null) {
                 call.respondText("No user found for the provided userId", status = HttpStatusCode.NotFound)

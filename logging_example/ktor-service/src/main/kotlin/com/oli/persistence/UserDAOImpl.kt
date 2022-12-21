@@ -34,12 +34,15 @@ class UserDAOImpl : UserDAO {
             .singleOrNull()
     }
 
-    override suspend fun update(user: User): Boolean = DatabaseFactory.dbQuery {
-        Users.update({ Users.id eq user.id }) {
-            it[userName] = user.userName
-            it[password] = user.password
-            it[email] = user.email
-        } > 0
+    override suspend fun update(user: User): Boolean {
+        return if (user.id == null) false
+        else DatabaseFactory.dbQuery {
+            Users.update({ Users.id eq user.id }) {
+                it[userName] = user.userName
+                it[password] = user.password
+                it[email] = user.email
+            } > 0
+        }
     }
 
     override suspend fun delete(id: Int): Boolean = DatabaseFactory.dbQuery {

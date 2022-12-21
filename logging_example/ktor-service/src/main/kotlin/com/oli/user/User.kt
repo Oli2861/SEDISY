@@ -4,7 +4,7 @@ import org.jetbrains.exposed.sql.Table
 
 @kotlinx.serialization.Serializable
 data class User(
-    val id: Int,
+    val id: Int? = null,
     val userName: String,
     val password: String,
     val email: String
