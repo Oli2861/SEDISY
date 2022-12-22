@@ -1,19 +1,27 @@
 <configuration>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} %class{36} - %msg%n</pattern>
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="com.oli.utility.MaskingPatternLayout">
+                <maskPattern>(password[^,\)]+)|(email[^,\)]+)</maskPattern>
+                <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} %class{36} - %msg%n</pattern>
+            </layout>
         </encoder>
     </appender>
 
     <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <destination>${LOGSTASH_HOST}</destination>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-            <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} %class{36} - %msg%n</pattern>
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                <layout class="com.oli.utility.MaskingPatternLayout">
+                    <maskPattern>(password\S+)|(email\S+)</maskPattern>
+                    <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} %class{36} - %msg%n</pattern>
+                </layout>
+            </encoder>
         </encoder>
         <keepAliveDuration>10 minutes</keepAliveDuration>
     </appender>
 
-    <root level="trace">
+    <root level="Info">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="LOGSTASH"/>
     </root>

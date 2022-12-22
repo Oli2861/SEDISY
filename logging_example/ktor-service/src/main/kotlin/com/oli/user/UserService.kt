@@ -1,5 +1,6 @@
 package com.oli.user
 
+import com.oli.utility.sanitizeLogEntry
 import org.apache.commons.text.StringEscapeUtils
 import org.slf4j.Logger
 
@@ -10,6 +11,7 @@ class UserService(
 
     suspend fun createUser(user: User): String? {
         val createdUser = userDAO.create(user)
+        logger.info("Created user $user")
         return createdUser?.userName
     }
 
@@ -34,8 +36,7 @@ class UserService(
             val user = userDAO.read(userID)
             user
         } catch (e: NumberFormatException) {
-            val sanitizedId = StringEscapeUtils.escapeJava(id)
-            logger.error("Failed to parse number: $sanitizedId")
+            logger.error("Failed to parse number: ${sanitizeLogEntry(id)}")
             null
         }
     }
@@ -48,9 +49,10 @@ class UserService(
 
 
 }
-
+/*
 fun main() {
     val str = "test \n test"
     val escaped = StringEscapeUtils.escapeJava(str)
     println(escaped)
 }
+*/

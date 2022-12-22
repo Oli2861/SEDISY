@@ -1,11 +1,15 @@
 package com.oli.plugins
 
+import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.util.*
-import io.ktor.server.application.*
+import org.koin.ktor.ext.inject
+import org.slf4j.Logger
 import java.time.Instant
 
 fun Application.configureSecurity() {
+    val logger by inject<Logger>()
+
     // SHA-256 hash function
     val digestFunction = getDigestFunction("SHA-256") { "ktor${it.length}" }
     // In memory table used to store SHA-256 hashed usernames and passwords
@@ -42,7 +46,7 @@ fun Application.configureSecurity() {
                 // Log, whether authentication was successful
                 if (userIdPrincipal == null) {
                     // Do not log sensitive information such as passwords.
-                    this.application.log.debug("Login attempt failed for user: $userName")
+                    logger.info("Login attempt failed for user: $userName")
                     // TODO: Store failed login attempts in a database.
 
                     if (failedLoginAttempts.keys.contains(userName)) {
@@ -52,7 +56,7 @@ fun Application.configureSecurity() {
                     }
 
                 } else {
-                    this.application.log.debug("Login attempt successful for user: $userName")
+                    logger.info("Login attempt successful for user: $userName")
                 }
 
                 userIdPrincipal
