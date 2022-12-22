@@ -1,14 +1,31 @@
 # Logging
 This repository contains a ktor application and an associated postgres database.
-Logs produced in both components are collected, stored and analyzed using Filebeat, Logstash, Elasticsearch and Kibana.
+Logs produced in both components are collected, stored and analyzed using Filebeat, Logstash, Elasticsearch and Kibana (also known as ELK-Stack).
 
 ##### Filebeat
+- File monitoring and shipping
+    - Files are read line by line and sent to the destination (Logstash / Elasticsearch)
+    - Remembers state of the files (what was already read)
 
 ##### Logstash
+- Data ingestion: 
+    - Collection 
+    - Transformation (structure, format,..)
+    - Transmission to the destination
 
 ##### Elasticsearch
+- Search engine platform (full text search)
+- Distributed document storage to store log entries
+- Manual / automated data analysis 
+    - Manual queries
+    - Anomaly detection
+    - Identification of unusual events and behaviors
 
 ##### Kibana
+- Visualization tool
+    - Graphs
+    - Queries (integrated with elasticsearch)
+    
 
 ## Summary
 Summary based on [1], [2], [3], [6], [7], [8], [9], [10]:
@@ -34,7 +51,7 @@ Summary based on [1], [2], [3], [6], [7], [8], [9], [10]:
 - Performance monitoring (latencies,..)
 
 ## Considerations
-**What to log?** --> Events!
+##### What to log? --> Events!
 e.g.
 - Failures
     - Input validation
@@ -46,7 +63,7 @@ e.g.
 - Important transactions & functionality
 - Legally relevant events
 
-**What should not be logged / what should be masked?**
+##### What should not be logged / what should be masked?
 - Data
     - Personal data
     - Data that is illegal to collect
@@ -57,13 +74,13 @@ e.g.
     - Secrets
 - Source code
 
-**What to include in a log?**
+##### What to include in a log?
 - When: Date, time
 - Where: Location (Identifiers to identify the application, the location within the application code and so on)
 - Who: Relevant actors (user identifier, source address)
 - What: Type of the event, severity, whether it is security relevant, log message / description
 
-**How to log?**
+##### How to log?
 - Use existing logging mechanisms / frameworks
 - Validate & sanitize log entries
     - Ensure correct format
@@ -81,7 +98,7 @@ Summary of the slf4j [3] logging levels:
 | Error | Error events, allowing the application to continue running.   |
 | Fatal | Severe error events, likely crashing the application.         |
 
-**How to manage logs?**
+##### How to manage logs?
 - File system
 - Database
 - Software to aggregate, analyze and monitor logs
@@ -107,6 +124,8 @@ Summary of the slf4j [3] logging levels:
 [1]: https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html
 [2]: https://owasp.org/www-community/attacks/Log_Injection
 [3]: https://www.slf4j.org/api/org/apache/log4j/Level.html
+[4]: https://www.elastic.co/guide/en/elasticsearch/reference/current/elasticsearch-intro.html
+[5]: https://www.elastic.co/guide/en/beats/filebeat/current/how-filebeat-works.html
 [6]: https://cwe.mitre.org/data/definitions/532.html
 [7]: https://cwe.mitre.org/data/definitions/778.html
 [8]: https://cwe.mitre.org/data/definitions/779.html
